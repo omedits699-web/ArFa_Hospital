@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>Patient Dashboard</h2>
+            <p class="text-muted">Welcome, {{ current_user.username }}!</p>
+        </div>
+    </div>
+
+    <!-- Patient Info Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <i class="fas fa-user-circle fa-5x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <h5>Patient Information</h5>
+                            <p class="mb-1"><strong>Patient ID:</strong> #P001</p>
+                            <p class="mb-1"><strong>Age:</strong> 20 years</p>
+                            <p class="mb-1"><strong>Blood Group:</strong> O-</p>
+                            <p class="mb-0"><strong>Last Visit:</strong> 2 days ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Quick Actions</h4>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-plus fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Book Appointment</h5>
+                    <p class="card-text">Schedule new appointment</p>
+                    <a href="/appointment/book" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">My Appointments</h5>
+                    <p class="card-text">View all appointments</p>
+                    <a href="/appointments/my" class="btn btn-success">View All</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-medical fa-3x mb-3 text-info"></i>
+                    <h5 class="card-title">Medical Records</h5>
+                    <p class="card-text">View medical history</p>
+                    <a href="/records/my" class="btn btn-info">View Records</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-pills fa-3x mb-3 text-warning"></i>
+                    <h5 class="card-title">Prescriptions</h5>
+                    <p class="card-text">View prescriptions</p>
+                    <a href="/prescriptions/my" class="btn btn-warning">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Upcoming Appointments</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Dr. Sarah Johnson</h6>
+                                    <p class="mb-1">General Checkup - Regular follow-up</p>
+                                    <small class="text-muted">Cardiology Department</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">Confirmed</span>
+                                    <p class="mb-0 mt-2"><strong>Tomorrow</strong><br><small>10:00 AM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Dr. Michael Brown</h6>
+                                    <p class="mb-1">Dental Checkup - Routine cleaning</p>
+                                    <small class="text-muted">Dental Department</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">Confirmed</span>
+                                    <p class="mb-0 mt-2"><strong>Next Week</strong><br><small>Monday, 2:00 PM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Dr. Emily Davis</h6>
+                                    <p class="mb-1">Eye Examination - Vision test</p>
+                                    <small class="text-muted">Ophthalmology Department</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning">Pending</span>
+                                    <p class="mb-0 mt-2"><strong>Next Week</strong><br><small>Wednesday, 11:00 AM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Health Summary</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="healthChart"></canvas>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Recent Medications</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Paracetamol</h6>
+                                    <small class="text-muted">500mg - 3 times daily</small>
+                                </div>
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Vitamin D</h6>
+                                    <small class="text-muted">1000 IU - Once daily</small>
+                                </div>
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Amoxicillin</h6>
+                                    <small class="text-muted">250mg - Completed</small>
+                                </div>
+                                <span class="badge bg-secondary">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+var ctx = document.getElementById('healthChart').getContext('2d');
+new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: ['Blood Pressure', 'Heart Rate', 'Temperature', 'Weight', 'Exercise', 'Sleep'],
+        datasets: [{
+            label: 'Current Health',
+            data: [85, 75, 90, 70, 60, 80],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

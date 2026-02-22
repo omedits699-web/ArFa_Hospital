@@ -1,0 +1,8 @@
+<form method="GET">
+    <input type="text" name="search" placeholder="Search Patient">
+    <button type="submit">Search</button>
+</form>
+
+{% for a in data %}
+<p>{{ a.patient_name }} - {{ a.date }} - {{ a.status }}</p>
+{% endfor %}

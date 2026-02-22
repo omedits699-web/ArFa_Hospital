@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>Nurse Dashboard</h2>
+            <p class="text-muted">Welcome, {{ current_user.username }}!</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Patients Today</h5>
+                    <h3>28</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Medications Given</h5>
+                    <h3>45</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Vitals Checked</h5>
+                    <h3>62</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Tasks</h5>
+                    <h3>12</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Quick Actions</h4>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-heartbeat fa-3x mb-3 text-danger"></i>
+                    <h5 class="card-title">Check Vitals</h5>
+                    <p class="card-text">Record patient vitals</p>
+                    <a href="/vitals/check" class="btn btn-danger">Check Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-pills fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Medications</h5>
+                    <p class="card-text">Administer medications</p>
+                    <a href="/medications/administer" class="btn btn-success">Administer</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list fa-3x mb-3 text-info"></i>
+                    <h5 class="card-title">Patient Care</h5>
+                    <p class="card-text">Update care plans</p>
+                    <a href="/care/update" class="btn btn-info">Update Care</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-injured fa-3x mb-3 text-warning"></i>
+                    <h5 class="card-title">Emergency</h5>
+                    <p class="card-text">Emergency response</p>
+                    <a href="/emergency" class="btn btn-warning">Emergency</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Monitoring -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Current Patients Under Care</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">John Doe - Room 201</h6>
+                                    <p class="mb-1">Post-surgery recovery - Monitor vitals every 2 hours</p>
+                                    <small class="text-muted">Last vitals: 30 mins ago</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning">Needs Attention</span>
+                                    <p class="mb-0 mt-2"><small>BP: 140/90, Temp: 37.5°C</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Jane Smith - Room 203</h6>
+                                    <p class="mb-1">Cardiac monitoring - Stable condition</p>
+                                    <small class="text-muted">Last vitals: 1 hour ago</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">Stable</span>
+                                    <p class="mb-0 mt-2"><small>BP: 120/80, HR: 72 bpm</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Mike Wilson - Room 205</h6>
+                                    <p class="mb-1">Diabetes management - Insulin due at 3 PM</p>
+                                    <small class="text-muted">Last medication: 8 hours ago</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-info">Medication Due</span>
+                                    <p class="mb-0 mt-2"><small>Glucose: 180 mg/dL</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Sarah Johnson - Room 207</h6>
+                                    <p class="mb-1">Respiratory care - Oxygen therapy</p>
+                                    <small class="text-muted">Last check: 45 mins ago</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">Under Observation</span>
+                                    <p class="mb-0 mt-2"><small>O2 Sat: 95%, RR: 18/min</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Shift Schedule</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="shiftChart"></canvas>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Medication Schedule</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">3:00 PM - Insulin</h6>
+                                    <small class="text-muted">Mike Wilson - Room 205</small>
+                                </div>
+                                <span class="badge bg-warning">Due Soon</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">4:00 PM - Antibiotics</h6>
+                                    <small class="text-muted">John Doe - Room 201</small>
+                                </div>
+                                <span class="badge bg-secondary">Upcoming</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">5:00 PM - Pain Meds</h6>
+                                    <small class="text-muted">Jane Smith - Room 203</small>
+                                </div>
+                                <span class="badge bg-secondary">Upcoming</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+var ctx = document.getElementById('shiftChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'],
+        datasets: [{
+            label: 'Patient Load',
+            data: [15, 22, 28, 25, 30, 18],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 2,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>Doctor Dashboard</h2>
+            <p class="text-muted">Welcome, Dr. {{ current_user.username }}!</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Patients</h5>
+                    <h3>12</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h3>8</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h3>4</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">This Week</h5>
+                    <h3>45</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Quick Actions</h4>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-day fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Today's Schedule</h5>
+                    <p class="card-text">View today's appointments</p>
+                    <a href="/appointments/today" class="btn btn-primary">View Schedule</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-plus fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Add Patient</h5>
+                    <p class="card-text">Register new patients</p>
+                    <a href="/patient/add" class="btn btn-success">Add Patient</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-medical fa-3x mb-3 text-info"></i>
+                    <h5 class="card-title">Medical Records</h5>
+                    <p class="card-text">View patient records</p>
+                    <a href="/records" class="btn btn-info">View Records</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Appointments -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Today's Appointments</h5>
+                    <span class="badge bg-primary">{{ "now"|strftime("%B %d, %Y") }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">John Doe</h6>
+                                    <p class="mb-1">General Checkup - Regular follow-up</p>
+                                    <small class="text-muted">Patient ID: #P001</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">Completed</span>
+                                    <p class="mb-0 mt-2"><small>9:00 AM - 9:30 AM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Jane Smith</h6>
+                                    <p class="mb-1">Cardiology Consultation - Chest pain evaluation</p>
+                                    <small class="text-muted">Patient ID: #P002</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning">In Progress</span>
+                                    <p class="mb-0 mt-2"><small>10:00 AM - 10:45 AM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Mike Wilson</h6>
+                                    <p class="mb-1">Orthopedic Review - Post-surgery check</p>
+                                    <small class="text-muted">Patient ID: #P003</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-secondary">Upcoming</span>
+                                    <p class="mb-0 mt-2"><small>11:00 AM - 11:30 AM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Sarah Johnson</h6>
+                                    <p class="mb-1">Pediatric Consultation - Routine vaccination</p>
+                                    <small class="text-muted">Patient ID: #P004</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-secondary">Upcoming</span>
+                                    <p class="mb-0 mt-2"><small>2:00 PM - 2:30 PM</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="doctorStatsChart"></canvas>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Recent Patients</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">John Doe</h6>
+                                <small class="text-muted">2 days ago</small>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">Emma Davis</h6>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">Robert Brown</h6>
+                                <small class="text-muted">5 days ago</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+var ctx = document.getElementById('doctorStatsChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [{
+            label: 'Patients Seen',
+            data: [12, 15, 8, 14, 10],
+            backgroundColor: '#007bff',
+            borderColor: '#0056b3',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
