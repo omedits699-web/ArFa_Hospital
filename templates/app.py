@@ -1,68 +1,62 @@
-from flask import Blueprint, render_template, request, redirect, flash
-from flask_login import login_user, logout_user, login_required
-from werkzeug.security import check_password_hash
-from models.models import User, db
-from sqlalchemy.exc import IntegrityError
+from flask import Flask, redirect, render_template, url_for
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from config import Config
+from models.models import db, User
 
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+login_manager = LoginManager()
 
-@auth.route("/register", methods=["GET","POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", "")
-        role = "patient"  # All registered users are patients by default
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-        # Validation
-        if not username or not password:
-            return render_template("register.html", error="Username and password are required")
-        
-        if len(username) < 3:
-            return render_template("register.html", error="Username must be at least 3 characters long")
-        
-        if len(password) < 6:
-            return render_template("register.html", error="Password must be at least 6 characters long")
-        
-        if password != confirm_password:
-            return render_template("register.html", error="Passwords do not match")
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-        # Check if username already exists
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            return render_template("register.html", error="Username already exists")
+    db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
 
-        try:
-            new_user = User(username=username, role=role)
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect("/auth/login")
-        except IntegrityError:
-            db.session.rollback()
-            return render_template("register.html", error="Username already exists")
-        except Exception as e:
-            db.session.rollback()
-            return render_template("register.html", error="Registration failed. Please try again.")
+    @app.route("/")
+    def index():
+        return render_template("hospital_index.html")
 
-    return render_template("register.html")
+    # Import and register blueprints
+    from routes.auth_routes import auth
+    from routes.patient_routes import patient
+    from routes.appointment_routes import appointment
+    from routes.dashboard import dashboard_bp
 
-@auth.route("/login", methods=["GET","POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    # Register blueprints with their URL prefixes
+    app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(patient, url_prefix='/patients')
+    app.register_blueprint(appointment, url_prefix='/appointments')
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
-        user = User.query.filter_by(username=username).first()
+    # Add additional direct routes for convenience
+    @app.route("/login")
+    def login_redirect():
+        return redirect(url_for('auth.login'))
 
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect("/dashboard")
+    @app.route("/register")
+    def register_redirect():
+        return redirect(url_for('auth.register'))
 
-    return render_template("login.html")
+    @app.route("/dashboard")
+    def dashboard_redirect():
+        return redirect(url_for('dashboard.dashboard'))
 
-@auth.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect("/auth/login")
+    @app.route("/appointments")
+    def appointments_redirect():
+        return redirect(url_for('appointment.appointments'))
+
+    with app.app_context():
+        db.create_all()
+
+    return app
+
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(debug=True)
