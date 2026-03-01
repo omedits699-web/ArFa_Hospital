@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple clear all data from database
+Clear all data from database completely
 """
 
 import os
@@ -26,6 +26,11 @@ def clear_all_data():
         try:
             print("🗂️  Connecting to database...")
             
+            # Check database connection
+            from sqlalchemy import text
+            db.session.execute(text("SELECT 1"))
+            print("✅ Database connected successfully")
+            
             # Count records before deletion
             user_count = User.query.count()
             patient_count = Patient.query.count()
@@ -40,7 +45,7 @@ def clear_all_data():
                 print("\n✨ Database is already empty!")
                 return
             
-            print(f"\n⚠️  This will delete ALL data from database!")
+            print(f"\n⚠️  This will delete ALL data from the database!")
             print("Type 'CLEARALL' to confirm:")
             confirm = input("Confirm: ")
             
