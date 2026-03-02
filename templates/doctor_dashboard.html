@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Patient Dashboard - Hospital Management System{% endblock %}
+{% block title %}Doctor Dashboard - Hospital Management System{% endblock %}
 
 {% block content %}
 <style>
@@ -124,10 +124,10 @@
         color: white;
     }
 
-    .stat-icon.total { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
-    .stat-icon.upcoming { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
-    .stat-icon.completed { background: linear-gradient(135deg, var(--success-color), #059669); }
-    .stat-icon.visits { background: linear-gradient(135deg, var(--warning-color), #d97706); }
+    .stat-icon.patients { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+    .stat-icon.today { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
+    .stat-icon.upcoming { background: linear-gradient(135deg, var(--success-color), #059669); }
+    .stat-icon.completed { background: linear-gradient(135deg, var(--warning-color), #d97706); }
 
     .stat-value {
         font-size: 2rem;
@@ -163,38 +163,6 @@
         gap: 0.5rem;
     }
 
-    /* Profile Section */
-    .profile-section {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        color: white;
-    }
-
-    .profile-info h4 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--dark-color);
-        margin-bottom: 0.5rem;
-    }
-
-    .profile-info p {
-        color: var(--text-muted);
-        margin-bottom: 0.25rem;
-    }
-
     /* Appointment List */
     .appointment-list {
         list-style: none;
@@ -209,6 +177,9 @@
         margin-bottom: 0.75rem;
         border-left: 4px solid var(--primary-color);
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
     .appointment-item:hover {
@@ -216,15 +187,35 @@
         box-shadow: var(--shadow-md);
     }
 
-    .appointment-date {
+    .appointment-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .appointment-icon.today { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
+    .appointment-icon.upcoming { background: linear-gradient(135deg, var(--success-color), #059669); }
+    .appointment-icon.completed { background: linear-gradient(135deg, var(--warning-color), #d97706); }
+
+    .appointment-details {
+        flex-grow: 1;
+    }
+
+    .appointment-title {
         font-weight: 600;
         color: var(--dark-color);
         margin-bottom: 0.25rem;
     }
 
-    .appointment-doctor {
+    .appointment-meta {
+        font-size: 0.8rem;
         color: var(--text-muted);
-        font-size: 0.9rem;
     }
 
     .appointment-status {
@@ -239,38 +230,51 @@
     }
 
     .status-scheduled { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
-    .status-completed { background: linear-gradient(135deg, var(--success-color), #059669); }
     .status-in-progress { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
+    .status-completed { background: linear-gradient(135deg, var(--success-color), #059669); }
 
-    /* Medical Info */
-    .medical-info {
+    /* Patient Grid */
+    .patient-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
     }
 
-    .medical-item {
+    .patient-item {
         background: var(--light-color);
         border-radius: 0.75rem;
         padding: 1rem;
         text-align: center;
+        transition: all 0.3s ease;
     }
 
-    .medical-item i {
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
+    .patient-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
     }
 
-    .medical-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
+    .patient-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .patient-name {
+        font-weight: 600;
+        color: var(--dark-color);
         margin-bottom: 0.25rem;
     }
 
-    .medical-value {
-        font-weight: 600;
-        color: var(--dark-color);
+    .patient-info {
+        font-size: 0.8rem;
+        color: var(--text-muted);
     }
 
     /* Animations */
@@ -300,9 +304,8 @@
             gap: 1rem;
         }
         
-        .profile-section {
-            flex-direction: column;
-            text-align: center;
+        .patient-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         }
     }
 </style>
@@ -337,10 +340,10 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <h1 class="page-title">
-                        <i class="fas fa-user"></i>
-                        Patient Dashboard
+                        <i class="fas fa-user-md"></i>
+                        Doctor Dashboard
                     </h1>
-                    <p class="page-subtitle">Welcome back, {{ current_user.username }}!</p>
+                    <p class="page-subtitle">Welcome back, Dr. {{ current_user.username }}!</p>
                 </div>
             </div>
         </div>
@@ -348,83 +351,61 @@
         <!-- Stats Cards -->
         <div class="stats-grid animate-fade-in">
             <div class="stat-card">
-                <div class="stat-icon total">
-                    <i class="fas fa-calendar"></i>
+                <div class="stat-icon patients">
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-value">{{ medical_summary.total_visits }}</div>
-                <div class="stat-label">Total Visits</div>
+                <div class="stat-value">{{ doctor_patients|length }}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon today">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-value">{{ today_appointments|length }}</div>
+                <div class="stat-label">Today's Appointments</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon upcoming">
                     <i class="fas fa-clock"></i>
                 </div>
-                <div class="stat-value">{{ medical_summary.upcoming_visits }}</div>
+                <div class="stat-value">{{ upcoming_appointments|length }}</div>
                 <div class="stat-label">Upcoming</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon completed">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="stat-value">{{ upcoming_appointments|length }}</div>
-                <div class="stat-label">Active</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon visits">
-                    <i class="fas fa-heartbeat"></i>
-                </div>
-                <div class="stat-value">{{ medical_summary.primary_condition }}</div>
-                <div class="stat-label">Condition</div>
+                <div class="stat-value">{{ completed_appointments|length }}</div>
+                <div class="stat-label">Completed Today</div>
             </div>
         </div>
 
-        <!-- Patient Profile -->
+        <!-- Today's Schedule -->
         <div class="info-card animate-fade-in">
             <h3>
-                <i class="fas fa-user-circle"></i>
-                Patient Profile
+                <i class="fas fa-calendar-day"></i>
+                Today's Schedule
             </h3>
-            <div class="profile-section">
-                <div class="profile-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="profile-info">
-                    <h4>{{ patient.name }}</h4>
-                    <p><strong>Age:</strong> {{ patient.age }} years</p>
-                    <p><strong>Gender:</strong> {{ patient.gender }}</p>
-                    <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
-                    <p><strong>Last Visit:</strong> {{ medical_summary.last_visit }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Medical Information -->
-        <div class="info-card animate-fade-in">
-            <h3>
-                <i class="fas fa-notes-medical"></i>
-                Medical Information
-            </h3>
-            <div class="medical-info">
-                <div class="medical-item">
-                    <i class="fas fa-stethoscope"></i>
-                    <div class="medical-label">Primary Condition</div>
-                    <div class="medical-value">{{ patient.disease }}</div>
-                </div>
-                <div class="medical-item">
-                    <i class="fas fa-user-md"></i>
-                    <div class="medical-label">Assigned Doctors</div>
-                    <div class="medical-value">{{ medical_summary.assigned_doctors|length }}</div>
-                </div>
-                <div class="medical-item">
-                    <i class="fas fa-pills"></i>
-                    <div class="medical-label">Medications</div>
-                    <div class="medical-value">Active</div>
-                </div>
-                <div class="medical-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <div class="medical-label">Next Checkup</div>
-                    <div class="medical-value">Scheduled</div>
-                </div>
-            </div>
+            {% if today_appointments %}
+            <ul class="appointment-list">
+                {% for appointment in today_appointments %}
+                <li class="appointment-item">
+                    <div class="appointment-icon today">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="appointment-details">
+                        <div class="appointment-title">{{ appointment.patient_name }}</div>
+                        <div class="appointment-meta">{{ appointment.date }} • {{ appointment.status.replace('-', ' ').title() }}</div>
+                    </div>
+                    <span class="appointment-status status-{{ appointment.status.replace('-', '-') }}">
+                        {{ appointment.status.replace('-', ' ').title() }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No appointments scheduled for today.</p>
+            {% endif %}
         </div>
 
         <!-- Upcoming Appointments -->
@@ -437,13 +418,12 @@
             <ul class="appointment-list">
                 {% for appointment in upcoming_appointments %}
                 <li class="appointment-item">
-                    <div class="appointment-date">
-                        <i class="fas fa-calendar-day me-2"></i>
-                        {{ appointment.date }}
+                    <div class="appointment-icon upcoming">
+                        <i class="fas fa-clock"></i>
                     </div>
-                    <div class="appointment-doctor">
-                        <i class="fas fa-user-md me-2"></i>
-                        Dr. {{ appointment.doctor_name }}
+                    <div class="appointment-details">
+                        <div class="appointment-title">{{ appointment.patient_name }}</div>
+                        <div class="appointment-meta">{{ appointment.date }} • {{ appointment.status.replace('-', ' ').title() }}</div>
                     </div>
                     <span class="appointment-status status-{{ appointment.status.replace('-', '-') }}">
                         {{ appointment.status.replace('-', ' ').title() }}
@@ -452,11 +432,30 @@
                 {% endfor %}
             </ul>
             {% else %}
-            <p class="text-muted">No upcoming appointments scheduled.</p>
-            <a href="{{ url_for('appointment.add_appointment') }}" class="btn btn-primary-modern btn-modern">
-                <i class="fas fa-plus"></i>
-                Schedule Appointment
-            </a>
+            <p class="text-muted">No upcoming appointments.</p>
+            {% endif %}
+        </div>
+
+        <!-- My Patients -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-users"></i>
+                My Patients
+            </h3>
+            {% if doctor_patients %}
+            <div class="patient-grid">
+                {% for patient in doctor_patients %}
+                <div class="patient-item">
+                    <div class="patient-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="patient-name">{{ patient.name }}</div>
+                    <div class="patient-info">{{ patient.age }} years • {{ patient.gender }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No patients assigned yet.</p>
             {% endif %}
         </div>
 
@@ -464,19 +463,18 @@
         <div class="info-card animate-fade-in">
             <h3>
                 <i class="fas fa-history"></i>
-                Recent Activity
+                Recent Completed Appointments
             </h3>
-            {% if past_appointments %}
+            {% if completed_appointments %}
             <ul class="appointment-list">
-                {% for appointment in past_appointments[-5:] %}
+                {% for appointment in completed_appointments %}
                 <li class="appointment-item">
-                    <div class="appointment-date">
-                        <i class="fas fa-calendar-day me-2"></i>
-                        {{ appointment.date }}
+                    <div class="appointment-icon completed">
+                        <i class="fas fa-check"></i>
                     </div>
-                    <div class="appointment-doctor">
-                        <i class="fas fa-user-md me-2"></i>
-                        Dr. {{ appointment.doctor_name }}
+                    <div class="appointment-details">
+                        <div class="appointment-title">{{ appointment.patient_name }}</div>
+                        <div class="appointment-meta">{{ appointment.date }} • Completed</div>
                     </div>
                     <span class="appointment-status status-completed">
                         Completed
@@ -485,8 +483,36 @@
                 {% endfor %}
             </ul>
             {% else %}
-            <p class="text-muted">No previous appointments.</p>
+            <p class="text-muted">No completed appointments recently.</p>
             {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="{{ url_for('appointment.add_appointment') }}" class="btn btn-primary-modern btn-modern w-100">
+                        <i class="fas fa-plus"></i>
+                        Schedule Appointment
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('appointment.appointments') }}" class="btn btn-info-modern btn-modern w-100">
+                        <i class="fas fa-calendar"></i>
+                        View All Appointments
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#" class="btn btn-success-modern btn-modern w-100">
+                        <i class="fas fa-file-medical"></i>
+                        Patient Records
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -506,5 +532,6 @@
             observer.observe(el);
         });
     });
+});
 </script>
 {% endblock %}
