@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Calendar{% endblock %}
+
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+.calendar-container {
+    min-height: 600px;
+}
+
+#calendar {
+    margin-top: 20px;
+}
+
+.fc-event {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.status-scheduled {
+    background-color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+}
+
+.status-in-progress {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.status-completed {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+.status-cancelled {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.filter-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.stats-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.calendar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1"><i class="fas fa-calendar-alt me-2"></i>Appointment Calendar</h2>
+                <p class="mb-0 opacity-75">Manage and view all appointments in calendar format</p>
+            </div>
+            <div>
+                <a href="/appointments" class="btn btn-light me-2">
+                    <i class="fas fa-list"></i> List View
+                </a>
+                <a href="/dashboard" class="btn btn-outline-light">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card stats-card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                    <h5 class="card-title">Total</h5>
+                    <h3 class="card-text" id="total-count">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card stats-card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h5 class="card-title">Scheduled</h5>
+                    <h3 class="card-text" id="scheduled-count">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card stats-card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-spinner fa-2x mb-2"></i>
+                    <h5 class="card-title">In Progress</h5>
+                    <h3 class="card-text" id="progress-count">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card stats-card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <h5 class="card-title">Completed</h5>
+                    <h3 class="card-text" id="completed-count">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card stats-card bg-danger text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-times-circle fa-2x mb-2"></i>
+                    <h5 class="card-title">Cancelled</h5>
+                    <h3 class="card-text" id="cancelled-count">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card stats-card bg-secondary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-md fa-2x mb-2"></i>
+                    <h5 class="card-title">Today</h5>
+                    <h3 class="card-text" id="today-count">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="status-filter" class="form-label">Filter by Status</label>
+                <select class="form-select" id="status-filter">
+                    <option value="">All Status</option>
+                    <option value="SCHEDULED">Scheduled</option>
+                    <option value="IN PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="doctor-filter" class="form-label">Filter by Doctor</label>
+                <select class="form-select" id="doctor-filter">
+                    <option value="">All Doctors</option>
+                    <option value="1">Dr. Smith</option>
+                    <option value="2">Dr. Johnson</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="patient-filter" class="form-label">Filter by Patient</label>
+                <select class="form-select" id="patient-filter">
+                    <option value="">All Patients</option>
+                    <option value="1">John Doe</option>
+                    <option value="2">Jane Smith</option>
+                    <option value="3">Bob Wilson</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="search-input" class="form-label">Search</label>
+                <input type="text" class="form-control" id="search-input" placeholder="Search appointments...">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button class="btn btn-primary" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                <button class="btn btn-secondary ms-2" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Clear Filters
+                </button>
+                <button class="btn btn-success ms-2" onclick="exportCalendar()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="card">
+        <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Calendar View</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="changeView('day')">
+                        <i class="fas fa-calendar-day"></i> Day
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="changeView('week')">
+                        <i class="fas fa-calendar-week"></i> Week
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="changeView('month')">
+                        <i class="fas fa-calendar"></i> Month
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+let calendar;
+let allAppointments = [
+    {
+        id: 1,
+        patient: { name: "John Doe", id: 1 },
+        doctor: { name: "Dr. Smith", id: 1 },
+        date_time: "2026-02-26T10:00:00",
+        status: "SCHEDULED",
+        notes: "Regular checkup"
+    },
+    {
+        id: 2,
+        patient: { name: "Jane Smith", id: 2 },
+        doctor: { name: "Dr. Johnson", id: 2 },
+        date_time: "2026-02-26T14:30:00",
+        status: "IN PROGRESS",
+        notes: "Follow-up appointment"
+    },
+    {
+        id: 3,
+        patient: { name: "Bob Wilson", id: 3 },
+        doctor: { name: "Dr. Smith", id: 1 },
+        date_time: "2026-02-25T09:00:00",
+        status: "COMPLETED",
+        notes: "Annual physical"
+    }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: transformAppointmentsToEvents(allAppointments),
+        eventClick: function(info) {
+            showAppointmentDetails(info.event);
+        },
+        eventDidMount: function(info) {
+            // Add status class to event
+            if (info.event.extendedProps.status) {
+                info.el.classList.add('status-' + info.event.extendedProps.status.toLowerCase().replace(' ', '-'));
+            }
+        },
+        height: 'auto'
+    });
+    
+    calendar.render();
+    updateTodayCount();
+    updateStatistics(allAppointments);
+});
+
+function transformAppointmentsToEvents(appointments) {
+    return appointments.map(function(apt) {
+        return {
+            id: apt.id,
+            title: apt.patient ? apt.patient.name : 'Unknown Patient',
+            start: apt.date_time,
+            extendedProps: {
+                status: apt.status,
+                doctor: apt.doctor ? apt.doctor.name : 'Unknown Doctor',
+                patient: apt.patient ? apt.patient.name : 'Unknown Patient',
+                notes: apt.notes || ''
+            }
+        };
+    });
+}
+
+function showAppointmentDetails(event) {
+    const props = event.extendedProps;
+    const modal = `
+        <div class="modal fade" id="appointmentModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Appointment Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Patient:</strong> ${props.patient}</p>
+                        <p><strong>Doctor:</strong> ${props.doctor}</p>
+                        <p><strong>Date & Time:</strong> ${event.start.toLocaleString()}</p>
+                        <p><strong>Status:</strong> <span class="badge bg-${getStatusColor(props.status)}">${props.status}</span></p>
+                        <p><strong>Notes:</strong> ${props.notes || 'No notes'}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="/appointments/edit/${event.id}" class="btn btn-primary">Edit</a>
+                        <a href="/appointments/details/${event.id}" class="btn btn-info">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('appointmentModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body and show it
+    document.body.insertAdjacentHTML('beforeend', modal);
+    const modalElement = new bootstrap.Modal(document.getElementById('appointmentModal'));
+    modalElement.show();
+}
+
+function getStatusColor(status) {
+    switch(status) {
+        case 'SCHEDULED': return 'info';
+        case 'IN PROGRESS': return 'warning';
+        case 'COMPLETED': return 'success';
+        case 'CANCELLED': return 'danger';
+        default: return 'secondary';
+    }
+}
+
+function applyFilters() {
+    const statusFilter = document.getElementById('status-filter').value;
+    const doctorFilter = document.getElementById('doctor-filter').value;
+    const patientFilter = document.getElementById('patient-filter').value;
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    
+    let filteredAppointments = allAppointments.filter(function(apt) {
+        let matches = true;
+        
+        if (statusFilter && apt.status !== statusFilter) matches = false;
+        if (doctorFilter && apt.doctor && apt.doctor.id != doctorFilter) matches = false;
+        if (patientFilter && apt.patient && apt.patient.id != patientFilter) matches = false;
+        if (searchInput) {
+            const searchText = (apt.patient?.name + ' ' + apt.doctor?.name + ' ' + apt.notes).toLowerCase();
+            if (!searchText.includes(searchInput)) matches = false;
+        }
+        
+        return matches;
+    });
+    
+    calendar.removeAllEvents();
+    calendar.addEventSource(transformAppointmentsToEvents(filteredAppointments));
+    updateStatistics(filteredAppointments);
+}
+
+function clearFilters() {
+    document.getElementById('status-filter').value = '';
+    document.getElementById('doctor-filter').value = '';
+    document.getElementById('patient-filter').value = '';
+    document.getElementById('search-input').value = '';
+    
+    calendar.removeAllEvents();
+    calendar.addEventSource(transformAppointmentsToEvents(allAppointments));
+    updateStatistics(allAppointments);
+}
+
+function updateStatistics(appointments) {
+    const stats = {
+        total: appointments.length,
+        scheduled: appointments.filter(a => a.status === 'SCHEDULED').length,
+        inProgress: appointments.filter(a => a.status === 'IN PROGRESS').length,
+        completed: appointments.filter(a => a.status === 'COMPLETED').length,
+        cancelled: appointments.filter(a => a.status === 'CANCELLED').length
+    };
+    
+    document.getElementById('total-count').textContent = stats.total;
+    document.getElementById('scheduled-count').textContent = stats.scheduled;
+    document.getElementById('progress-count').textContent = stats.inProgress;
+    document.getElementById('completed-count').textContent = stats.completed;
+    document.getElementById('cancelled-count').textContent = stats.cancelled;
+}
+
+function updateTodayCount() {
+    const today = new Date().toDateString();
+    const todayAppointments = allAppointments.filter(function(apt) {
+        return new Date(apt.date_time).toDateString() === today;
+    });
+    document.getElementById('today-count').textContent = todayAppointments.length;
+}
+
+function changeView(view) {
+    switch(view) {
+        case 'day':
+            calendar.changeView('timeGridDay');
+            break;
+        case 'week':
+            calendar.changeView('timeGridWeek');
+            break;
+        case 'month':
+            calendar.changeView('dayGridMonth');
+            break;
+    }
+}
+
+function exportCalendar() {
+    const icalData = generateICal(allAppointments);
+    const blob = new Blob([icalData], { type: 'text/calendar' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'appointments.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function generateICal(appointments) {
+    let ical = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Hospital App//Appointment Calendar//EN\n';
+    
+    appointments.forEach(function(apt) {
+        const start = new Date(apt.date_time);
+        const end = new Date(start.getTime() + 60 * 60 * 1000); // Assume 1 hour duration
+        
+        ical += 'BEGIN:VEVENT\n';
+        ical += 'UID:' + apt.id + '@hospital.app\n';
+        ical += 'DTSTART:' + formatICalDate(start) + '\n';
+        ical += 'DTEND:' + formatICalDate(end) + '\n';
+        ical += 'SUMMARY:' + (apt.patient ? apt.patient.name : 'Appointment') + '\n';
+        ical += 'DESCRIPTION:' + (apt.doctor ? apt.doctor.name : '') + '\\n' + (apt.notes || '') + '\n';
+        ical += 'STATUS:' + apt.status + '\n';
+        ical += 'END:VEVENT\n';
+    });
+    
+    ical += 'END:VCALENDAR';
+    return ical;
+}
+
+function formatICalDate(date) {
+    return date.getUTCFullYear() + 
+           String(date.getUTCMonth() + 1).padStart(2, '0') + 
+           String(date.getUTCDate()).padStart(2, '0') + 'T' +
+           String(date.getUTCHours()).padStart(2, '0') + 
+           String(date.getUTCMinutes()).padStart(2, '0') + 
+           String(date.getUTCSeconds()).padStart(2, '0') + 'Z';
+}
+</script>
+{% endblock %}
