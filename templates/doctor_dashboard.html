@@ -1,220 +1,510 @@
 {% extends "base.html" %}
 
+{% block title %}Patient Dashboard - Hospital Management System{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h2>Doctor Dashboard</h2>
-            <p class="text-muted">Welcome, Dr. {{ current_user.username }}!</p>
+<style>
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --dark-color: #1f2937;
+        --light-color: #f9fafb;
+        --border-color: #e5e7eb;
+        --text-muted: #6b7280;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--dark-color);
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Modern Navigation */
+    .modern-navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--primary-color) !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-brand i {
+        font-size: 1.8rem;
+    }
+
+    /* Main Container */
+    .main-container {
+        padding: 2rem 0;
+        min-height: calc(100vh - 80px);
+    }
+
+    /* Page Header */
+    .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .stat-icon.total { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+    .stat-icon.upcoming { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
+    .stat-icon.completed { background: linear-gradient(135deg, var(--success-color), #059669); }
+    .stat-icon.visits { background: linear-gradient(135deg, var(--warning-color), #d97706); }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    .info-card h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Profile Section */
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .profile-info h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info p {
+        color: var(--text-muted);
+        margin-bottom: 0.25rem;
+    }
+
+    /* Appointment List */
+    .appointment-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .appointment-item {
+        background: var(--light-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .appointment-item:hover {
+        transform: translateX(5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .appointment-date {
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .appointment-doctor {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .appointment-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: white;
+    }
+
+    .status-scheduled { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+    .status-completed { background: linear-gradient(135deg, var(--success-color), #059669); }
+    .status-in-progress { background: linear-gradient(135deg, var(--info-color), #1d4ed8); }
+
+    /* Medical Info */
+    .medical-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .medical-item {
+        background: var(--light-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .medical-item i {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .medical-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 0.25rem;
+    }
+
+    .medical-value {
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .profile-section {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<!-- Modern Navigation -->
+<nav class="modern-navbar">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">
+                <i class="fas fa-hospital-alt"></i>
+                Hospital System
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ url_for('appointment.appointments') }}" class="btn btn-outline-modern btn-modern">
+                    <i class="fas fa-calendar"></i>
+                    Appointments
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-modern btn-modern">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
         </div>
     </div>
+</nav>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Today's Patients</h5>
-                    <h3>12</h3>
+<!-- Main Container -->
+<div class="main-container">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header animate-fade-in">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-user"></i>
+                        Patient Dashboard
+                    </h1>
+                    <p class="page-subtitle">Welcome back, {{ current_user.username }}!</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Completed</h5>
-                    <h3>8</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h3>4</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h5 class="card-title">This Week</h5>
-                    <h3>45</h3>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h4>Quick Actions</h4>
+        <!-- Stats Cards -->
+        <div class="stats-grid animate-fade-in">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-value">{{ medical_summary.total_visits }}</div>
+                <div class="stat-label">Total Visits</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon upcoming">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value">{{ medical_summary.upcoming_visits }}</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value">{{ upcoming_appointments|length }}</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon visits">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="stat-value">{{ medical_summary.primary_condition }}</div>
+                <div class="stat-label">Condition</div>
+            </div>
         </div>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-calendar-day fa-3x mb-3 text-primary"></i>
-                    <h5 class="card-title">Today's Schedule</h5>
-                    <p class="card-text">View today's appointments</p>
-                    <a href="/appointments/today" class="btn btn-primary">View Schedule</a>
+        <!-- Patient Profile -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-user-circle"></i>
+                Patient Profile
+            </h3>
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h4>{{ patient.name }}</h4>
+                    <p><strong>Age:</strong> {{ patient.age }} years</p>
+                    <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                    <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
+                    <p><strong>Last Visit:</strong> {{ medical_summary.last_visit }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-user-plus fa-3x mb-3 text-success"></i>
-                    <h5 class="card-title">Add Patient</h5>
-                    <p class="card-text">Register new patients</p>
-                    <a href="/patient/add" class="btn btn-success">Add Patient</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-file-medical fa-3x mb-3 text-info"></i>
-                    <h5 class="card-title">Medical Records</h5>
-                    <p class="card-text">View patient records</p>
-                    <a href="/records" class="btn btn-info">View Records</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Today's Appointments -->
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Today's Appointments</h5>
-                    <span class="badge bg-primary">{{ "now"|strftime("%B %d, %Y") }}</span>
+        <!-- Medical Information -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-notes-medical"></i>
+                Medical Information
+            </h3>
+            <div class="medical-info">
+                <div class="medical-item">
+                    <i class="fas fa-stethoscope"></i>
+                    <div class="medical-label">Primary Condition</div>
+                    <div class="medical-value">{{ patient.disease }}</div>
                 </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">John Doe</h6>
-                                    <p class="mb-1">General Checkup - Regular follow-up</p>
-                                    <small class="text-muted">Patient ID: #P001</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-success">Completed</span>
-                                    <p class="mb-0 mt-2"><small>9:00 AM - 9:30 AM</small></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Jane Smith</h6>
-                                    <p class="mb-1">Cardiology Consultation - Chest pain evaluation</p>
-                                    <small class="text-muted">Patient ID: #P002</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-warning">In Progress</span>
-                                    <p class="mb-0 mt-2"><small>10:00 AM - 10:45 AM</small></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Mike Wilson</h6>
-                                    <p class="mb-1">Orthopedic Review - Post-surgery check</p>
-                                    <small class="text-muted">Patient ID: #P003</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-secondary">Upcoming</span>
-                                    <p class="mb-0 mt-2"><small>11:00 AM - 11:30 AM</small></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Sarah Johnson</h6>
-                                    <p class="mb-1">Pediatric Consultation - Routine vaccination</p>
-                                    <small class="text-muted">Patient ID: #P004</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-secondary">Upcoming</span>
-                                    <p class="mb-0 mt-2"><small>2:00 PM - 2:30 PM</small></p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="medical-item">
+                    <i class="fas fa-user-md"></i>
+                    <div class="medical-label">Assigned Doctors</div>
+                    <div class="medical-value">{{ medical_summary.assigned_doctors|length }}</div>
+                </div>
+                <div class="medical-item">
+                    <i class="fas fa-pills"></i>
+                    <div class="medical-label">Medications</div>
+                    <div class="medical-value">Active</div>
+                </div>
+                <div class="medical-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="medical-label">Next Checkup</div>
+                    <div class="medical-value">Scheduled</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-calendar-alt"></i>
+                Upcoming Appointments
+            </h3>
+            {% if upcoming_appointments %}
+            <ul class="appointment-list">
+                {% for appointment in upcoming_appointments %}
+                <li class="appointment-item">
+                    <div class="appointment-date">
+                        <i class="fas fa-calendar-day me-2"></i>
+                        {{ appointment.date }}
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Quick Stats</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="doctorStatsChart"></canvas>
-                </div>
-            </div>
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5>Recent Patients</h5>
-                </div>
-                <div class="card-body">
-                    <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">John Doe</h6>
-                                <small class="text-muted">2 days ago</small>
-                            </div>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Emma Davis</h6>
-                                <small class="text-muted">3 days ago</small>
-                            </div>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Robert Brown</h6>
-                                <small class="text-muted">5 days ago</small>
-                            </div>
-                        </a>
+                    <div class="appointment-doctor">
+                        <i class="fas fa-user-md me-2"></i>
+                        Dr. {{ appointment.doctor_name }}
                     </div>
-                </div>
-            </div>
+                    <span class="appointment-status status-{{ appointment.status.replace('-', '-') }}">
+                        {{ appointment.status.replace('-', ' ').title() }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No upcoming appointments scheduled.</p>
+            <a href="{{ url_for('appointment.add_appointment') }}" class="btn btn-primary-modern btn-modern">
+                <i class="fas fa-plus"></i>
+                Schedule Appointment
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="info-card animate-fade-in">
+            <h3>
+                <i class="fas fa-history"></i>
+                Recent Activity
+            </h3>
+            {% if past_appointments %}
+            <ul class="appointment-list">
+                {% for appointment in past_appointments[-5:] %}
+                <li class="appointment-item">
+                    <div class="appointment-date">
+                        <i class="fas fa-calendar-day me-2"></i>
+                        {{ appointment.date }}
+                    </div>
+                    <div class="appointment-doctor">
+                        <i class="fas fa-user-md me-2"></i>
+                        Dr. {{ appointment.doctor_name }}
+                    </div>
+                    <span class="appointment-status status-completed">
+                        Completed
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No previous appointments.</p>
+            {% endif %}
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-var ctx = document.getElementById('doctorStatsChart').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-        datasets: [{
-            label: 'Patients Seen',
-            data: [12, 15, 8, 14, 10],
-            backgroundColor: '#007bff',
-            borderColor: '#0056b3',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
+    // Add scroll animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {threshold: 0.1, rootMargin: '0px 0px -50px 0px'};
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('animate-fade-in');
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .info-card').forEach(el => {
+            observer.observe(el);
+        });
+    });
 </script>
 {% endblock %}
