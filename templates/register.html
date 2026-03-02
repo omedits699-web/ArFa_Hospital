@@ -1,44 +1,585 @@
 {% extends "base.html" %}
 
+{% block title %}Register - Hospital Management System{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            {% if error %}
-            <div class="alert alert-danger">
-                {{ error }}
+<style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --border-color: #e5e7eb;
+            --text-muted: #6b7280;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .shape-3 {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 10s;
+        }
+
+        .shape-4 {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            right: 30%;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+
+        /* Modern Navigation */
+        .modern-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Registration Card */
+        .registration-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .registration-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .registration-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Modern Form Controls */
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { background: var(--danger-color); width: 33%; }
+        .strength-medium { background: var(--warning-color); width: 66%; }
+        .strength-strong { background: var(--success-color); width: 100%; }
+
+        /* Modern Buttons */
+        .btn-modern {
+            border-radius: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .btn-outline-modern {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-modern:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Alert Styling */
+        .custom-alert {
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .login-link p {
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .registration-card {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .registration-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+    </div>
+
+    <!-- Modern Navigation -->
+    <nav class="modern-navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">
+                    <i class="fas fa-hospital-alt"></i>
+                    Hospital System
+                </a>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-modern btn-modern">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                </div>
             </div>
-            {% endif %}
-            
-            <h2>Patient Registration</h2>
-            
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Create Your Patient Account</h4>
-                    <p class="text-muted">Register to book appointments and manage your healthcare</p>
-                    <form method="POST" action="/auth/register">
-                        <div class="form-group mb-3">
-                            <label for="username">Username:</label>
-                            <input type="text" id="username" name="username" class="form-control" placeholder="Choose a username" required>
-                            <small class="text-muted">Minimum 3 characters</small>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="container">
+            <div class="registration-card">
+                <!-- Registration Header -->
+                <div class="registration-header">
+                    <h1 class="registration-title">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </h1>
+                    <p class="registration-subtitle">Join our healthcare community</p>
+                </div>
+
+                <!-- Alert Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="custom-alert alert-{{ 'danger' if category == 'error' else category }}">
+                                <i class="fas {{ 'exclamation-circle' if category == 'error' else 'check-circle' }}"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% if errors %}
+                    {% for error in errors %}
+                    <div class="custom-alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Registration Form -->
+                <form method="POST" action="{{ url_for('auth.register') }}" id="registrationForm">
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Username *</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: var(--light-color); border: 2px solid var(--border-color); border-right: none; border-radius: 0.75rem 0 0 0.75rem;">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" id="username" name="username" class="form-control" 
+                                   placeholder="Choose a username" required
+                                   style="border: 2px solid var(--border-color); border-left: none; border-radius: 0 0.75rem 0.75rem 0;">
                         </div>
-                        <input type="hidden" id="role" name="role" value="patient">
-                        <div class="form-group mb-3">
-                            <label for="password">Password:</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Choose a password" required>
-                            <small class="text-muted">Minimum 6 characters</small>
+                        <div class="form-text">Minimum 3 characters, letters and numbers only</div>
+                    </div>
+
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password *</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: var(--light-color); border: 2px solid var(--border-color); border-right: none; border-radius: 0.75rem 0 0 0.75rem;">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" class="form-control" 
+                                   placeholder="Choose a strong password" required
+                                   style="border: 2px solid var(--border-color); border-left: none; border-radius: 0 0.75rem 0.75rem 0;">
+                            <button type="button" class="input-group-text" id="togglePassword" 
+                                    style="background: var(--light-color); border: 2px solid var(--border-color); border-left: none; border-radius: 0 0.75rem 0.75rem 0; cursor: pointer;">
+                                <i class="fas fa-eye" id="passwordIcon"></i>
+                            </button>
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="confirm_password">Confirm Password:</label>
-                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
+                        <div class="form-text">Minimum 8 characters, include uppercase, lowercase, and numbers</div>
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: var(--light-color); border: 2px solid var(--border-color); border-right: none; border-radius: 0.75rem 0 0 0.75rem;">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" 
+                                   placeholder="Confirm your password" required
+                                   style="border: 2px solid var(--border-color); border-left: none; border-radius: 0 0.75rem 0.75rem 0;">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
-                    </form>
-                    
-                    <p class="mt-3 text-center">Already have an account? <a href="/auth/login">Login here</a></p>
+                        <div class="form-text">Re-enter your password to confirm</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-modern btn-modern" id="registerBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="login-link">
+                    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a></p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthIndicator = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthIndicator.className = 'password-strength';
+                return;
+            }
+            
+            let strength = 0;
+            
+            // Check password strength
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z\d]/.test(password)) strength++;
+            
+            // Update strength indicator
+            strengthIndicator.className = 'password-strength';
+            
+            if (strength <= 2) {
+                strengthIndicator.classList.add('strength-weak');
+            } else if (strength <= 4) {
+                strengthIndicator.classList.add('strength-medium');
+            } else {
+                strengthIndicator.classList.add('strength-strong');
+            }
+        });
+
+        // Form validation
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const username = document.getElementById('username').value;
+            
+            // Clear previous alerts
+            const existingAlert = document.querySelector('.custom-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Validate username
+            if (username.length < 3) {
+                e.preventDefault();
+                showAlert('Username must be at least 3 characters long', 'danger');
+                return;
+            }
+            
+            // Validate password
+            if (password.length < 6) {
+                e.preventDefault();
+                showAlert('Password must be at least 6 characters long', 'danger');
+                return;
+            }
+            
+            // Validate password match
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                showAlert('Passwords do not match', 'danger');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.getElementById('registerBtn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+        });
+
+        function showAlert(message, type = 'info') {
+            const alertHTML = `
+                <div class="custom-alert alert-${type}">
+                    <i class="fas ${type === 'danger' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Insert alert after the registration header
+            const registrationHeader = document.querySelector('.registration-header');
+            registrationHeader.insertAdjacentHTML('afterend', alertHTML);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = document.querySelector('.custom-alert');
+                if (alert) {
+                    alert.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Add input animations
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
 {% endblock %}
